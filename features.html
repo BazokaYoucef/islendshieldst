@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>المميزات - مدينة سكاي للحياة الواقعية</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <header class="glass">
+        <nav>
+            <ul>
+                <li><a href="index.html"><i class="fas fa-home"></i> الرئيسية</a></li>
+                <li><a href="shop.html"><i class="fas fa-store"></i> المتجر</a></li>
+                <li><a href="features.html" class="active"><i class="fas fa-star"></i> المميزات</a></li>
+                <li><a href="rules.html"><i class="fas fa-gavel"></i> القوانين</a></li>
+                <li><a href="download.html"><i class="fas fa-download"></i> التحميل</a></li>
+                <li><a href="apply.html"><i class="fas fa-user-shield"></i> تقديم الرقابة</a></li>
+            </ul>
+        </nav>
+        <div class="auth-status">
+            <span id="userInfo" style="display: none;">
+                <div class="user-profile">
+                    <img id="userAvatar" src="" alt="صورة المستخدم" class="user-avatar">
+                    <div class="user-details">
+                        <span id="displayName"></span>
+                        <span id="username"></span>
+                    </div>
+                    <button onclick="logout()" class="logout-btn" title="تسجيل خروج">
+                        <i class="fas fa-sign-out-alt"></i>
+                    </button>
+                </div>
+            </span>
+            <button onclick="redirectToLogin()" id="loginBtn" class="login-btn">
+                <i class="fab fa-discord"></i>
+                تسجيل دخول بالديسكورد
+            </button>
+        </div>
+    </header>
+
+    <main>
+        <section class="glass-card">
+            <h1>مميزات السيرفر</h1>
+            <div class="features-grid">
+                <div class="feature-item glass">
+                    <i class="fas fa-briefcase"></i>
+                    <h3>نظام وظائف متطور</h3>
+                    <p>أكثر من 20 وظيفة متنوعة مع مهام تفاعلية</p>
+                </div>
+                <div class="feature-item glass">
+                    <i class="fas fa-car-side"></i>
+                    <h3>نظام سيارات واقعي</h3>
+                    <p>محاكاة واقعية للسيارات مع نظام صيانة</p>
+                </div>
+                <div class="feature-item glass">
+                    <i class="fas fa-home"></i>
+                    <h3>نظام منازل متكامل</h3>
+                    <p>شراء وتأثيث المنازل مع نظام إيجار</p>
+                </div>
+                <div class="feature-item glass">
+                    <i class="fas fa-store-alt"></i>
+                    <h3>نظام شركات</h3>
+                    <p>إنشاء وإدارة شركتك الخاصة</p>
+                </div>
+                <div class="feature-item glass">
+                    <i class="fas fa-user-shield"></i>
+                    <h3>نظام شرطة متطور</h3>
+                    <p>مهام وتحقيقات واقعية للشرطة</p>
+                </div>
+                <div class="feature-item glass">
+                    <i class="fas fa-hospital"></i>
+                    <h3>نظام طبي واقعي</h3>
+                    <p>نظام إسعاف ومستشفيات متكامل</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+
+
+
+
+    <footer>
+        <div class="copyright">
+            جميع الحقوق محفوظة &copy; 2024 
+            <a href="https://discord.gg/QQmWreQnWQ" target="_blank">By SKY
+        </div>
+    </footer>
+<script src="auth.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const token = localStorage.getItem('discord_token');
+        const userInfo = document.getElementById('userInfo');
+        const loginBtn = document.getElementById('loginBtn');
+        
+        if (token) {
+            const userData = JSON.parse(localStorage.getItem('discord_user'));
+            if (userData) {
+                document.getElementById('displayName').textContent = userData.global_name || userData.username;
+                document.getElementById('userAvatar').src = `https://cdn.discordapp.com/avatars/${userData.id}/${userData.avatar}.png`;
+                userInfo.style.display = 'flex';
+                loginBtn.style.display = 'none';
+            }
+        }
+    });
+
+    function logout() {
+        localStorage.removeItem('discord_token');
+        localStorage.removeItem('discord_user');
+        window.location.reload();
+    }
+</script>
+</body>
+</html> 

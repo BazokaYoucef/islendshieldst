@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>جاري تسجيل الدخول...</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #1a1a1a;
+            color: white;
+            font-family: Arial, sans-serif;
+        }
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #00be9f;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin-right: 10px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="loader"></div>
+    <div>جاري تسجيل الدخول...</div>
+
+    <script>
+        const fragment = new URLSearchParams(window.location.hash.slice(1));
+        const token = fragment.get('access_token');
+        
+        if (token) {
+            localStorage.setItem('discord_token', token);
+            fetch('https://discord.com/api/users/@me', {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            })
+            .then(response => {
+                if (!response.ok) throw new Error('فشل في الحصول على بيانات المستخدم');
+                return response.json();
+            })
+            .then(data => {
+                const userData = {
+                    id: data.id,
+                    username: data.username,
+                    global_name: data.global_name,
+                    avatar: data.avatar,
+                    discriminator: data.discriminator
+                };
+                localStorage.setItem('discord_user', JSON.stringify(userData));
+                window.location.href = '/index.html';
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('حدث خطأ أثناء تسجيل الدخول. الرجاء المحاولة مرة أخرى.');
+                window.location.href = '/index.html';
+            });
+        } else {
+            alert('لم يتم العثور على توكن التسجيل. الرجاء المحاولة مرة أخرى.');
+            window.location.href = '/index.html';
+        }
+    </script>
+</body>
+</html> 

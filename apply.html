@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تقديم الرقابة الايدارية - مدينة سكاي للحياة الواقعية</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <header class="glass">
+        <nav>
+            <ul>
+                <li><a href="index.html"><i class="fas fa-home"></i> الرئيسية</a></li>
+                <li><a href="shop.html"><i class="fas fa-store"></i> المتجر</a></li>
+                <li><a href="features.html"><i class="fas fa-star"></i> المميزات</a></li>
+                <li><a href="rules.html"><i class="fas fa-gavel"></i> القوانين</a></li>
+                <li><a href="download.html"><i class="fas fa-download"></i> التحميل</a></li>
+                <li><a href="apply.html" class="active"><i class="fas fa-user-shield"></i> تقديم الرقابة</a></li>
+            </ul>
+        </nav>
+        <div class="auth-status">
+            <span id="userInfo" style="display: none;">
+                <div class="user-profile">
+                    <img id="userAvatar" src="" alt="صورة المستخدم" class="user-avatar">
+                    <div class="user-details">
+                        <span id="displayName"></span>
+                        <span id="username"></span>
+                    </div>
+                    <button onclick="logout()" class="logout-btn" title="تسجيل خروج">
+                        <i class="fas fa-sign-out-alt"></i>
+                    </button>
+                </div>
+            </span>
+            <button onclick="redirectToLogin()" id="loginBtn" class="login-btn">
+                <i class="fab fa-discord"></i>
+                تسجيل دخول بالديسكورد
+            </button>
+        </div>
+    </header>
+
+    <main>
+        <section class="glass-card">
+            <h1>تقديم طلب رقابة</h1>
+            <div class="apply-container">
+                <form id="applyForm" onsubmit="submitApplication(event)" class="apply-form glass">
+                    <div class="form-group">
+                        <label for="username">اسم اللاعب في اللعبة:</label>
+                        <input type="text" id="username" name="username" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="discordId">معرف الديسكورد:</label>
+                        <input type="text" id="discordId" name="discordId" placeholder="مثال: username#1234" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="age">العمر:</label>
+                        <input type="number" id="age" name="age" min="16" max="99" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="playTime">عدد ساعات اللعب في السيرفر:</label>
+                        <input type="number" id="playTime" name="playTime" min="1" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="experience">الخبرات السابقة:</label>
+                        <textarea id="experience" name="experience" rows="4" required></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="whyYou">لماذا تريد أن تكون مراقباً؟</label>
+                        <textarea id="whyYou" name="whyYou" rows="4" required></textarea>
+                    </div>
+
+                    <button type="submit" class="buy-btn">تقديم الطلب</button>
+                </form>
+            </div>
+        </section>
+    </main>
+
+    <script src="auth.js"></script>
+
+    <script>
+        const DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1319604184122658849/bMiHwiQP7D9aRzahAtmQQK8XV0nUXUn9yJBRMpcLOWcaC8YtrvOXCLDBBO02trCs4NYh";
+
+        async function submitApplication(event) {
+            event.preventDefault();
+            
+            if (!checkAuth()) return;
+            if (!checkTimeout('apply')) return;
+            
+            const username = document.getElementById('username').value;
+            const discordId = document.getElementById('discordId').value;
+            const age = document.getElementById('age').value;
+            const playTime = document.getElementById('playTime').value;
+            const experience = document.getElementById('experience').value;
+            const whyYou = document.getElementById('whyYou').value;
+
+            const webhookData = {
+                username: "نظام التقديم",
+                avatar_url: "https://media.discordapp.net/attachments/1318592633874153604/1319711394131742793/cbc9ff145352897.Y3JvcCw5OTksNzgyLDAsMTA4.png?ex=6766f483&is=6765a303&hm=a9c660a7eb0155cd3edbe8b4ed89aaa2639c81143e78c257b6c14a5ad84aa03d&=&format=webp&quality=lossless",
+                embeds: [{
+                    title: "طلب تقديم رقابة جديد 👮",
+                    type: "rich",
+                    description: "تم استلام طلب تقديم جديد للرقابة",
+                    color: parseInt("00be9f", 16),
+                    fields: [
+                        {
+                            name: "اسم اللاعب",
+                            value: username,
+                            inline: true
+                        },
+                        {
+                            name: "معرف الديسكورد",
+                            value: discordId,
+                            inline: true
+                        },
+                        {
+                            name: "العمر",
+                            value: age + " سنة",
+                            inline: true
+                        },
+                        {
+                            name: "ساعات اللعب",
+                            value: playTime + " ساعة",
+                            inline: true
+                        },
+                        {
+                            name: "الخبرات السابقة",
+                            value: experience,
+                            inline: false
+                        },
+                        {
+                            name: "سبب التقديم",
+                            value: whyYou,
+                            inline: false
+                        }
+                    ],
+                    timestamp: new Date().toISOString()
+                }]
+            };
+
+            try {
+                const response = await fetch(DISCORD_WEBHOOK_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(webhookData)
+                });
+
+                if (response.ok) {
+                    updateLastActionTime('apply');
+                    alert('تم إرسال طلبك بنجاح! سيتم مراجعته من قبل الإدارة.');
+                    document.getElementById('applyForm').reset();
+                } else {
+                    throw new Error('فشل في إرسال الطلب');
+                }
+            } catch (error) {
+                alert('حدث خطأ في إرسال الطلب. الرجاء المحاولة مرة أخرى.');
+                console.error('Error:', error);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const discordUser = JSON.parse(localStorage.getItem('discord_user'));
+            if (discordUser) {
+                document.getElementById('discordId').value = `<@${discordUser.id}>`;
+                document.getElementById('discordId').disabled = true;
+                document.getElementById('discordId').setAttribute('data-display', `${discordUser.username}`);
+            }
+        });
+    </script>
+
+
+<footer>
+    <div class="copyright">
+        جميع الحقوق محفوظة &copy; 2024 
+        <a href="https://discord.gg/QQmWreQnWQ" target="_blank">By SKY
+    </div>
+</footer>
+<script src="auth.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const token = localStorage.getItem('discord_token');
+        const userInfo = document.getElementById('userInfo');
+        const loginBtn = document.getElementById('loginBtn');
+        
+        if (token) {
+            const userData = JSON.parse(localStorage.getItem('discord_user'));
+            if (userData) {
+                document.getElementById('displayName').textContent = userData.global_name || userData.username;
+                document.getElementById('userAvatar').src = `https://cdn.discordapp.com/avatars/${userData.id}/${userData.avatar}.png`;
+                userInfo.style.display = 'flex';
+                loginBtn.style.display = 'none';
+            }
+        }
+    });
+
+    function logout() {
+        localStorage.removeItem('discord_token');
+        localStorage.removeItem('discord_user');
+        window.location.reload();
+    }
+</script>
+</body>
+</html> 

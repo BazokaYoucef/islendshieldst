@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>التحميل - مدينة سكاي للحياة الواقعية</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <header class="glass">
+        <nav>
+            <ul>
+                <li><a href="index.html"><i class="fas fa-home"></i> الرئيسية</a></li>
+                <li><a href="shop.html"><i class="fas fa-store"></i> المتجر</a></li>
+                <li><a href="features.html"><i class="fas fa-star"></i> المميزات</a></li>
+                <li><a href="rules.html"><i class="fas fa-gavel"></i> القوانين</a></li>
+                <li><a href="download.html" class="active"><i class="fas fa-download"></i> التحميل</a></li>
+                <li><a href="apply.html"><i class="fas fa-user-shield"></i> تقديم الرقابة</a></li>
+            </ul>
+        </nav>
+        <div class="auth-status">
+            <span id="userInfo" style="display: none;">
+                <div class="user-profile">
+                    <img id="userAvatar" src="" alt="صورة المستخدم" class="user-avatar">
+                    <div class="user-details">
+                        <span id="displayName"></span>
+                        <span id="username"></span>
+                    </div>
+                    <button onclick="logout()" class="logout-btn" title="تسجيل خروج">
+                        <i class="fas fa-sign-out-alt"></i>
+                    </button>
+                </div>
+            </span>
+            <button onclick="redirectToLogin()" id="loginBtn" class="login-btn">
+                <i class="fab fa-discord"></i>
+                تسجيل دخول بالديسكورد
+            </button>
+        </div>
+    </header>
+
+    <main>
+        <section class="glass-card">
+            <h1>تحميل اللعبة</h1>
+            <div class="download-grid">
+                <div class="download-item glass">
+                    <i class="fas fa-gamepad"></i>
+                    <h3>تحميل MTA:SA</h3>
+                    <p class="file-info"><i class="fas fa-file-archive"></i> حجم الملف: 1.2 GB</p>
+                    <a href="https://multitheftauto.com/" class="download-link" target="_blank">
+                        <button class="buy-btn">تحميل اللعبة</button>
+                    </a>
+                </div>
+                
+                <div class="download-item glass">
+                    <i class="fas fa-book"></i>
+                    <h3>دليل التثبيت</h3>
+                    <p class="file-info"><i class="fas fa-file-alt"></i> خطوات سهلة</p>
+                    <button class="buy-btn" onclick="toggleGuide()">عرض الدليل</button>
+                </div>
+            </div>
+
+            <div class="download-steps" id="installGuide">
+                <h3><i class="fas fa-list-ol"></i> خطوات التثبيت:</h3>
+                <ol>
+                    <li>قم بتحميل لعبة MTA:SA من الرابط الأول</li>
+                    <li>قم بتثبيت اللعبة على جهازك</li>
+                    <li>شغل اللعبة واختر الدخول للسيرفر</li>
+                    <li>أدخل اسم المستخدم وكلمة المرور</li>
+                    <li>استمتع باللعب!</li>
+                </ol>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        function toggleGuide() {
+            const guide = document.getElementById('installGuide');
+            guide.classList.toggle('active');
+        }
+    </script>
+
+
+
+<footer>
+    <div class="copyright">
+        جميع الحقوق محفوظة &copy; 2024 
+        <a href="https://discord.gg/QQmWreQnWQ" target="_blank">By SKY
+    </div>
+</footer>
+<script src="auth.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const token = localStorage.getItem('discord_token');
+        const userInfo = document.getElementById('userInfo');
+        const loginBtn = document.getElementById('loginBtn');
+        
+        if (token) {
+            const userData = JSON.parse(localStorage.getItem('discord_user'));
+            if (userData) {
+                document.getElementById('displayName').textContent = userData.global_name || userData.username;
+                document.getElementById('userAvatar').src = `https://cdn.discordapp.com/avatars/${userData.id}/${userData.avatar}.png`;
+                userInfo.style.display = 'flex';
+                loginBtn.style.display = 'none';
+            }
+        }
+    });
+
+    function logout() {
+        localStorage.removeItem('discord_token');
+        localStorage.removeItem('discord_user');
+        window.location.reload();
+    }
+</script>
+</body>
+</html> 

@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>المتجر - مدينة سكاي للحياة الواقعية</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <script src="auth.js"></script>
+
+    <header class="glass">
+        <nav>
+            <ul>
+                <li><a href="index.html"><i class="fas fa-home"></i> الرئيسية</a></li>
+                <li><a href="shop.html" class="active"><i class="fas fa-store"></i> المتجر</a></li>
+                <li><a href="features.html"><i class="fas fa-star"></i> المميزات</a></li>
+                <li><a href="rules.html"><i class="fas fa-gavel"></i> القوانين</a></li>
+                <li><a href="download.html"><i class="fas fa-download"></i> التحميل</a></li>
+                <li><a href="apply.html"><i class="fas fa-user-shield"></i> تقديم الرقابة</a></li>
+            </ul>
+        </nav>
+
+        <div class="auth-status">
+            <span id="userInfo" style="display: none;">
+                <div class="user-profile">
+                    <img id="userAvatar" src="" alt="صورة المستخدم" class="user-avatar">
+                    <div class="user-details">
+                        <span id="displayName"></span>
+                        <span id="username"></span>
+                    </div>
+                    <button onclick="logout()" class="logout-btn" title="تسجيل خروج">
+                        <i class="fas fa-sign-out-alt"></i>
+                    </button>
+                </div>
+            </span>
+            <button onclick="redirectToLogin()" id="loginBtn" class="login-btn">
+                <i class="fab fa-discord"></i>
+                تسجيل دخول بالديسكورد
+            </button>
+        </div>
+    </header>
+
+    <main>
+        <section id="shop" class="glass-card">
+            <h1>متجر السيرفر</h1>
+           
+           
+            <div class="shop-grid">
+                
+                
+                
+                
+                <div class="shop-item glass">
+                    <img src="news_1734392366702.jpeg">
+                    <h3>عضوية VIP</h3>
+                    <p>مميزات حصرية ودعم خاص</p>
+                    <span class="price">50 نقطة</span>
+                    <button class="buy-btn" onclick="showPurchaseForm('عضوية VIP', '50')">شراء</button>
+                </div>
+
+
+
+
+                <div class="shop-item glass">
+                    <img src="news_1734392366702.jpeg" >
+                    <h3>سيارة خاصة</h3>
+                    <p>سيارة حصرية مع تعديلات خاصة</p>
+                    <span class="price">100 نقطة</span>
+                    <button class="buy-btn" onclick="showPurchaseForm('سيارة خاصة', '100')">شراء</button>
+                </div>
+
+
+                <div class="shop-item glass">
+                    <img src="news_1734392366702.jpeg" >
+                    <h3>سيارة خاصة</h3>
+                    <p>سيارة حصرية مع تعديلات خاصة</p>
+                    <span class="price">100 نقطة</span>
+                    <button class="buy-btn" onclick="showPurchaseForm('سيارة خاصة', '100')">شراء</button>
+                </div>
+
+                
+                <div class="shop-item glass">
+                    <img src="news_1734392366702.jpeg" >
+                    <h3>سيارة خاصة</h3>
+                    <p>سيارة حصرية مع تعديلات خاصة</p>
+                    <span class="price">100 نقطة</span>
+                    <button class="buy-btn" onclick="showPurchaseForm('سيارة خاصة', '100')">شراء</button>
+                </div>
+
+
+            </div>
+        </section>
+
+        <div id="purchaseModal" class="modal">
+            <div class="modal-content glass">
+                <span class="close">&times;</span>
+                <h2>تأكيد الشراء</h2>
+                <form id="purchaseForm" onsubmit="submitPurchase(event)">
+                    <input type="hidden" id="itemName" name="itemName">
+                    <input type="hidden" id="itemPrice" name="itemPrice">
+                    
+                    <div class="form-group">
+                        <label for="username">اسم اللاعب:</label>
+                        <input type="text" id="username" name="username" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="discordId">معرف الديسكورد:</label>
+                        <input type="text" id="discordId" name="discordId" placeholder="مثال: username#1234" required>
+                    </div>
+
+                    <div class="purchase-info">
+                        <p>ا��منتج: <span id="modalItemName"></span></p>
+                        <p>السعر: <span id="modalItemPrice"></span> نقطة</p>
+                    </div>
+
+                    <button type="submit" class="buy-btn">تأكيد الشراء</button>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1319606424258740334/3k0r3YmSaC-SxEzD3bWUN1qkcrWicFIAVFkMzZTFh1wRHzJj98GShaFuybOWJ9cVIUHe";
+        const modal = document.getElementById('purchaseModal');
+        const closeBtn = document.getElementsByClassName('close')[0];
+
+        function showPurchaseForm(itemName, price) {
+            if (!checkAuth()) return;
+            if (!checkTimeout('shop')) return;
+            
+            document.getElementById('itemName').value = itemName;
+            document.getElementById('itemPrice').value = price;
+            document.getElementById('modalItemName').textContent = itemName;
+            document.getElementById('modalItemPrice').textContent = price;
+            
+            const discordUser = JSON.parse(localStorage.getItem('discord_user'));
+            if (discordUser) {
+                document.getElementById('discordId').value = `<@${discordUser.id}>`;
+                document.getElementById('discordId').disabled = true;
+                document.getElementById('discordId').setAttribute('data-display', `${discordUser.username}`);
+            }
+            
+            modal.style.display = 'block';
+        }
+
+        closeBtn.onclick = function() {
+            modal.style.display = 'none';
+        }
+
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                modal.style.display = 'none';
+            }
+        }
+
+        async function submitPurchase(event) {
+            event.preventDefault();
+            
+            updateLastActionTime('shop');
+            
+            const username = document.getElementById('username').value;
+            const discordId = document.getElementById('discordId').value;
+            const itemName = document.getElementById('itemName').value;
+            const price = document.getElementById('itemPrice').value;
+
+            const webhookData = {
+                username: "نظام المتجر",
+                avatar_url: "https://media.discordapp.net/attachments/1318592633874153604/1319711394131742793/cbc9ff145352897.Y3JvcCw5OTksNzgyLDAsMTA4.png?ex=6766f483&is=6765a303&hm=a9c660a7eb0155cd3edbe8b4ed89aaa2639c81143e78c257b6c14a5ad84aa03d&=&format=webp&quality=lossless",
+                embeds: [{
+                    title: "طلب شراء جديد 🛍️",
+                    type: "rich",
+                    description: "تم استلام طلب شراء جديد",
+                    color: parseInt("00be9f", 16),
+                    fields: [
+                        {
+                            name: "اسم اللاعب",
+                            value: username,
+                            inline: true
+                        },
+                        {
+                            name: "معرف الديسكورد",
+                            value: discordId,
+                            inline: true
+                        },
+                        {
+                            name: "المنتج",
+                            value: itemName,
+                            inline: true
+                        },
+                        {
+                            name: "السعر",
+                            value: price + " نقطة",
+                            inline: true
+                        }
+                    ],
+                    timestamp: new Date().toISOString()
+                }]
+            };
+
+            try {
+                const response = await fetch(DISCORD_WEBHOOK_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(webhookData)
+                });
+
+                if (response.ok) {
+                    alert('تم إرسال طلبك بنجاح! سيتم التواصل معك على الديسكورد.');
+                    modal.style.display = 'none';
+                    document.getElementById('purchaseForm').reset();
+                } else {
+                    throw new Error('فشل في إرسال الطلب');
+                }
+            } catch (error) {
+                alert('حدث خطأ في إرسال الطلب. الرجاء المحاولة مرة أخرى.');
+                console.error('Error:', error);
+            }
+        }
+    </script>
+
+
+
+
+<footer>
+    <div class="copyright">
+        جميع الحقوق محفوظة &copy; 2024 
+        <a href="https://discord.gg/QQmWreQnWQ" target="_blank">By SKY
+    </div>
+</footer>
+
+<script src="auth.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const token = localStorage.getItem('discord_token');
+        const userInfo = document.getElementById('userInfo');
+        const loginBtn = document.getElementById('loginBtn');
+        
+        if (token) {
+            const userData = JSON.parse(localStorage.getItem('discord_user'));
+            if (userData) {
+                document.getElementById('displayName').textContent = userData.global_name || userData.username;
+                document.getElementById('userAvatar').src = `https://cdn.discordapp.com/avatars/${userData.id}/${userData.avatar}.png`;
+                userInfo.style.display = 'flex';
+                loginBtn.style.display = 'none';
+            }
+        }
+    });
+
+    function logout() {
+        localStorage.removeItem('discord_token');
+        localStorage.removeItem('discord_user');
+        window.location.reload();
+    }
+</script>
+</body>
+</html> 
